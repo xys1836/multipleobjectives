@@ -74,13 +74,6 @@ tuple SFC {
 int sfc_r[SFCRequests][1..MaxNbOfVNFs][TypeOfVNFs] = ...;
 int sfc_c[SFCRequests][1..MaxNbOfVNFs] = ...;
 
-// g_(i,j,γ) 
-//int sfc1_r[1..MaxNbOfVNFs][TypeOfVNFs] = ...;
-//int sfc2_r[1..MaxNbOfVNFs][TypeOfVNFs] = ...;
-//g_(i,j,c)
-//int sfc1_c[1..2] = ...;
-//int sfc2_c[1..3] = ...;
-
 /*
 x_(γ,v): A Boolean variable that equals 1 if VNF γ is host on substrate network node v, and 0 otherwise. 
 y_(i,j,v): A Boolean variable that equals 1 if the j-th VNF in the i-th SFC is deployed on substrate network node v, and 0 otherwise. 
@@ -92,6 +85,9 @@ dvar boolean x[TypeOfVNFs][NodeSet];
 
 dvar boolean y[SFCRequests][1..MaxNbOfVNFs][NodeSet];
 dvar boolean z[SFCRequests][Edges];
+
+
+dvar int k[SFCRequests][NodeSet];
 
 execute
 {
@@ -124,14 +120,12 @@ execute
 minimize 
   sum(t in TypeOfVNFs)
     sum(v in NodeSet)
-      x[t][v] * VNFSetupCost[t];
-
-//minimize
-//    sum(r in SFCRequests)
-//    sum(i in 1..card(r.VNFList))
-//    	sum(t in TypeOfVNFs)
-//    	  sum(v in NodeSet)
-//      		y[r][i][v] *  VNFOpCost[t][v] ;
+      x[t][v] * VNFSetupCost[t]
+      +
+    sum(r in SFCRequests)
+    	sum(i in 1..card(r.VNFList))
+    	  sum(v in NodeSet)
+      		y[r][i][v] *  VNFOpCost[item(r.VNFList, i-1)][v] ;
 
 subject to {
 	NodeCapacityCt:
@@ -242,6 +236,28 @@ subject to {
   			}  		 
   		 }
   	}
+  	
+  	
+  	// for keeping sfc order
+  	forall(sfcRequest in SFCRequests){
+  		k[sfcRequest][sfcRequest.src] == 0;  	
+	  	forall(e in Edges){
+  		 	k[sfcRequest][e.v] - k[sfcRequest][e.u] >= 1 - NbOfNodes * (1 - z[sfcRequest][e]);
+  		 }  	
+  		 
+  	}
+	// for keeping sfc order
+  	forall(sfcRequest in SFCRequests){
+  		forall(i in 1..(card(sfcRequest.VNFList)-1)){
+  		 	forall(v in NodeSet:  v != sfcRequest.dst && v != sfcRequest.src){
+  				forall(u in NodeSet:  u != sfcRequest.dst && u != sfcRequest.src && u != v){
+  					y[sfcRequest][i][v] == 1 && y[sfcRequest][i+1][u] == 1 =>
+	  				k[sfcRequest][u] - k[sfcRequest][v] >=0;
+  				}		
+  			}
+  		}  	  	
+  	}
+  	
 }
 
 

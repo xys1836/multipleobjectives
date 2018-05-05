@@ -102,21 +102,16 @@ tuple SFC {
 }
 */
 SFCRequests = {
-	<"sfc_1", 1, 4, 20, 20, {"VNF2", "VNF3", "VNF1"}>,
+	<"sfc_1", 1, 4, 20, 20, {"VNF3", "VNF2"}>,
 	<"sfc_2", 1, 4, 25, 20, {"VNF3", "VNF1", "VNF2"}>
 };
 
 MaxNbOfVNFs = 3;
 
-//int SFCVNFs[1..NbSFCs][1..MaxNbOfVNFs][TypeOfVNFs] = ...;
-
-//int sfc1[1..MaxNbOfVNFs][TypeOfVNFs] = ...;
-
 sfc_r = [
 	[
-		#["VNF1": 0, "VNF2": 1, "VNF3": 0]#,
 		#["VNF1": 0, "VNF2": 0, "VNF3": 1]#,
-		#["VNF1": 1, "VNF2": 0, "VNF3": 0]#,
+		#["VNF1": 0, "VNF2": 1, "VNF3": 0]#,
 	],
 	[
 		#["VNF1": 0, "VNF2": 0, "VNF3": 1]#,
@@ -126,22 +121,9 @@ sfc_r = [
 
 ];
 sfc_c = [
-			[10, 10, 10],
+			[10, 10],
 			[10, 10, 10]
 ];
-//sfc1_r = [
-//#["VNF1": 0, "VNF2": 1, "VNF3": 0]#,
-//#["VNF1": 1, "VNF2": 0, "VNF3": 0]#,
-//];
-//
-//sfc2_r = [
-//#["VNF1": 0, "VNF2": 0, "VNF3": 1]#,
-//#["VNF1": 1, "VNF2": 0, "VNF3": 0]#,
-//#["VNF1": 0, "VNF2": 1, "VNF3": 0]#,
-//];
-//
-//sfc1_c = [10, 20];
-//sfc2_c = [10, 20];
 
 
 
