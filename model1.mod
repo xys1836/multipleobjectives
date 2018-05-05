@@ -89,10 +89,9 @@ z_(i,(u,v) ): A Boolean variable that equals 1 if the path of the i-th SFC is tr
 */
 
 dvar boolean x[TypeOfVNFs][NodeSet];
+
 dvar boolean y[SFCRequests][1..MaxNbOfVNFs][NodeSet];
 dvar boolean z[SFCRequests][Edges];
-
-dexpr int k[r in SFCRequests][i in 1..MaxNbOfVNFs][v in NodeSet][e in Edges] =  y[r][i][v] + z[r][e] - 1;
 
 execute
 {
@@ -110,7 +109,7 @@ execute
 		writeln("SFCRequests size:  ", r.VNFList); 
 	}
 };
-minimize 0;
+//minimize 
 //  sum(t in TypeOfVNFs)
 //    sum(v in NodeSet)
 //      x[t][v] * VNFSetupCost[t]
@@ -121,51 +120,57 @@ minimize 0;
 //    	  sum(v in NodeSet)
 //      		y[r][i][v] *  VNFOpCost[t][v] ;
 
+//
+minimize 
+  sum(t in TypeOfVNFs)
+    sum(v in NodeSet)
+      x[t][v] * VNFSetupCost[t];
+
+//minimize
+//    sum(r in SFCRequests)
+//    sum(i in 1..card(r.VNFList))
+//    	sum(t in TypeOfVNFs)
+//    	  sum(v in NodeSet)
+//      		y[r][i][v] *  VNFOpCost[t][v] ;
 
 subject to {
 	NodeCapacityCt:
   	forall(v in NodeSet){
   		sum(sfcRequest in SFCRequests)
-  		  sum(i in 1..MaxNbOfVNFs)
+  		  sum(i in 1..card(sfcRequest.VNFList))
   		    y[sfcRequest][i][v] * sfc_c[sfcRequest][i] <= CpuCapacity[v];
-  	}
-  	
-  	forall(sfcRequest in SFCRequests){
-  		forall(i in 1..card(sfcRequest.VNFList)) {
-  			  sum(v in NodeSet)
-  			     y[sfcRequest][i][v] == 1;
-  		} 	
-  	}
-  	
-  	forall(v in NodeSet){
-  		sum(sfcRequest in SFCRequests)
-  		  sum(i in 1..MaxNbOfVNFs)
-  		    y[sfcRequest][i][v]  == 1;
   	}
   	
   	PlacementCt:
   	forall(sfcRequest in SFCRequests){
+  		forall(i in 1..card(sfcRequest.VNFList)) {
+  			  sum(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src)
+  			     y[sfcRequest][i][v] == 1; // at least one node should host it. 
+  		} 	
+  	}
+  	
+  	forall(sfcRequest in SFCRequests){
+  		forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
+  			sum(i in 1..card(sfcRequest.VNFList))  y[sfcRequest][i][v] <= 1; 	//no more than two nodes host one vnf	
+  		}
+  	}
+
+  	forall(sfcRequest in SFCRequests){
   		forall(i in 1..card(sfcRequest.VNFList)){
-  			forall(r in TypeOfVNFs){
-  				forall(v in NodeSet){
-  					y[sfcRequest][i][v] == x[r][v];		
+  				forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
+  					 y[sfcRequest][i][v]==1 => x[item(sfcRequest.VNFList, i-1)][v] == 1;	
+  					 x[item(sfcRequest.VNFList, i-1)][v] == 0 => y[sfcRequest][i][v]==0;		
   				}  			
-  			}  		
+  					
   		}  	
   	}
   	
   	forall(sfcRequest in SFCRequests){
   		forall(i in 1..card(sfcRequest.VNFList)){
-  			
-  				
-  					y[sfcRequest][i][sfcRequest.src] == 0;	
-  					y[sfcRequest][i][sfcRequest.dst] == 0;			
-  				 			
-  			 		
+  			y[sfcRequest][i][sfcRequest.src] == 0;	
+  			y[sfcRequest][i][sfcRequest.dst] == 0;			
   		}
   	}
-  	
-  	
   	
   	BandwidthCt:
   	forall(e in Edges){
@@ -178,7 +183,7 @@ subject to {
   		sum(e in Edges)
   		  z[sfcRequest][e] * Lantency[e] <=  sfcRequest.latency;
   	}
-  	
+
   	FlowCt:
   	forall(sfcRequest in SFCRequests){
   		sum(edge_1 in Edges: edge_1.u == sfcRequest.src)
@@ -209,6 +214,7 @@ subject to {
   		}
   	}
   	
+  	// One edge can only be used once
   	forall(sfcRequest in SFCRequests) {
   		 forall(e in Edges){
   		 	forall(e2 in Edges: e2.u == e.v && e2.v == e.u){
@@ -217,46 +223,22 @@ subject to {
   		 }
   	}
   	
-  	// k[r in SFCRequests][i in 1..MaxNbOfVNFs][v in NodeSet][e in Edges]
+  	
   	forall(sfcRequest in SFCRequests) {
-  		 forall(v in NodeSet){
+  		 forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
   		 	forall(i in 1..card(sfcRequest.VNFList)){
-  		 		sum(e in Edges: e.u == v)
-//  		 		  z[sfcRequest][e] * y[sfcRequest][i][v] == 1;		
-  		 		  k[sfcRequest][i][v][e] == 1;
+  		 		y[sfcRequest][i][v]==1 => sum(e in Edges: e.v == v)
+					z[sfcRequest][e] == 1;
 		
   			}  		 
   		 }
   	}
   	
   	forall(sfcRequest in SFCRequests) {
-  		 forall(v in NodeSet){
+  		 forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
   		 	forall(i in 1..card(sfcRequest.VNFList)){
-  		 		sum(e in Edges: e.v == v)
-//  		 		  z[sfcRequest][e] * y[sfcRequest][i][v] == 1;
-					k[sfcRequest][i][v][e] == 1;		
-  			}  		 
-  		 }
-  	}
-  	
-  	forall(sfcRequest in SFCRequests) {
-  		 forall(v in NodeSet){
-  		 	forall(i in 1..card(sfcRequest.VNFList)){
-  		 		forall(e in Edges){
-					k[sfcRequest][i][v][e] <= y[sfcRequest][i][v];	
-					k[sfcRequest][i][v][e] >= 0;	
-   				}					
-  			}  		 
-  		 }
-  	}
-  	
-  	forall(sfcRequest in SFCRequests) {
-  		 forall(v in NodeSet){
-  		 	forall(i in 1..card(sfcRequest.VNFList)){
-  		 		forall(e in Edges){
-					k[sfcRequest][i][v][e] <= z[sfcRequest][e];	
-					k[sfcRequest][i][v][e] >= 0;
-  				}					
+  		 		y[sfcRequest][i][v]==1 => sum(e in Edges: e.v == v)
+					z[sfcRequest][e] == 1;
   			}  		 
   		 }
   	}
@@ -282,7 +264,7 @@ execute {
 		var count = 0;	
 		for(var vnf in r.VNFList){
 			count = count + 1;		
-			writeln("vnf:  ", count); 			
+			writeln("vnf:  ", vnf); 			
 			for(var v in NodeSet){
 				if(y[r][count][v]==1)		
 					writeln("Node ", v);		
