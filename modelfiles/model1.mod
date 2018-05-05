@@ -145,7 +145,7 @@ subject to {
   	
   	forall(sfcRequest in SFCRequests){
   		forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
-  			sum(i in 1..card(sfcRequest.VNFList))  y[sfcRequest][i][v] <= 1; 	//no more than two nodes host one vnf	
+  			sum(i in 1..card(sfcRequest.VNFList))  y[sfcRequest][i][v] <= 1; 	//no more than two vnfs are host by one node	
   		}
   	}
 
@@ -153,7 +153,7 @@ subject to {
   		forall(i in 1..card(sfcRequest.VNFList)){
   				forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
   					 y[sfcRequest][i][v]==1 => x[item(sfcRequest.VNFList, i-1)][v] == 1;	
-  					 x[item(sfcRequest.VNFList, i-1)][v] == 0 => y[sfcRequest][i][v]==0;		
+//  					 x[item(sfcRequest.VNFList, i-1)][v] == 0 => y[sfcRequest][i][v]== 0;		
   				}  			
   					
   		}  	
@@ -178,7 +178,7 @@ subject to {
   		  z[sfcRequest][e] * Latency[e] <=  sfcRequest.latency;
   	}
 
-  	FlowCt:
+  	SrcFlowCt:
   	forall(sfcRequest in SFCRequests){
   		sum(edge_1 in Edges: edge_1.u == sfcRequest.src)
   			z[sfcRequest][edge_1]
@@ -187,7 +187,7 @@ subject to {
   			z[sfcRequest][edge_2] 		
   		== 1;
   	}
-  	
+  	DstFlowCt:
   	forall(sfcRequest in SFCRequests){
   		(sum(edge_1 in Edges: edge_1.v == sfcRequest.dst)
   			z[sfcRequest][edge_1])
@@ -196,7 +196,7 @@ subject to {
   			z[sfcRequest][edge_2]) 		
   		== 1;
   	}
-  	
+  	MidNodeFlowCt:
   	forall(sfcRequest in SFCRequests){
   		forall(v in NodeSet: v != sfcRequest.dst && v != sfcRequest.src){
 	  		(sum(edge_1 in Edges: edge_1.u == v)
