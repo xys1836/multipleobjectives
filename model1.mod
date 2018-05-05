@@ -26,7 +26,7 @@ tuple Edge {
 {Edge} Edges = ...;
 //{Edge} DEdges = ...;
 int BandwidthCapacity[Edges] = ...;
-int Lantency[Edges] = ...;
+int Latency[Edges] = ...;
 
 
 /*
@@ -94,7 +94,7 @@ execute
 	writeln("Nodes:  ", NodeSet);  
 	writeln("CPUCapacity:  ", CpuCapacity);  
 	writeln("BandwidthCapacity:  ", BandwidthCapacity);  
-	writeln("Latency:  ", Lantency);  
+	writeln("Latency:  ", Latency);  
 	writeln("TypeOfVNFs:  ", TypeOfVNFs); 
 	writeln("VNFSetupCost:  ", VNFSetupCost); 
 	writeln("VNFOpCost:  ", VNFOpCost); 
@@ -175,7 +175,7 @@ subject to {
   	LatencyCt:
   	forall(sfcRequest in SFCRequests){
   		sum(e in Edges)
-  		  z[sfcRequest][e] * Lantency[e] <=  sfcRequest.latency;
+  		  z[sfcRequest][e] * Latency[e] <=  sfcRequest.latency;
   	}
 
   	FlowCt:

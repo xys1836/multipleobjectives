@@ -54,7 +54,7 @@ BandwidthCapacity = #[
 			
 			]#;
 			
-Lantency = #[
+Latency = #[
 			<1, 2>: 5, 
 			<2, 3>: 5, 
 			<2, 6>: 5, 
