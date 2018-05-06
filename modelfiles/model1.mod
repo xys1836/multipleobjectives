@@ -87,7 +87,11 @@ dvar boolean y[SFCRequests][1..MaxNbOfVNFs][NodeSet];
 dvar boolean z[SFCRequests][Edges];
 
 
-dvar int k[SFCRequests][NodeSet];
+dvar int+ k[SFCRequests][NodeSet];
+
+
+
+
 
 execute
 {
@@ -125,7 +129,7 @@ minimize
     sum(r in SFCRequests)
     	sum(i in 1..card(r.VNFList))
     	  sum(v in NodeSet)
-      		y[r][i][v] *  VNFOpCost[item(r.VNFList, i-1)][v] ;
+      		y[r][i][v] * sfc_c[r][i] * VNFOpCost[item(r.VNFList, i-1)][v] ;
 
 subject to {
 	NodeCapacityCt:
@@ -159,12 +163,7 @@ subject to {
   		}  	
   	}
   	
-  	forall(sfcRequest in SFCRequests){
-  		forall(i in 1..card(sfcRequest.VNFList)){
-  			y[sfcRequest][i][sfcRequest.src] == 0;	
-  			y[sfcRequest][i][sfcRequest.dst] == 0;			
-  		}
-  	}
+  	
   	
   	BandwidthCt:
   	forall(e in Edges){
@@ -240,7 +239,7 @@ subject to {
   	
   	// for keeping sfc order
   	forall(sfcRequest in SFCRequests){
-  		k[sfcRequest][sfcRequest.src] == 0;  	
+  		k[sfcRequest][sfcRequest.src] == 1;  	
 	  	forall(e in Edges){
   		 	k[sfcRequest][e.v] - k[sfcRequest][e.u] >= 1 - NbOfNodes * (1 - z[sfcRequest][e]);
   		 }  	
@@ -256,6 +255,20 @@ subject to {
   				}		
   			}
   		}  	  	
+  	}
+  	
+  	forall(sfcRequest in SFCRequests){
+  		forall(i in 1..card(sfcRequest.VNFList)){
+  			forall(j in 7..12){
+  			y[sfcRequest][i][j] == 0;	
+//  			y[sfcRequest][i][j] == 0;	  			
+  			}		
+  		}
+  	}
+  	forall(r in TypeOfVNFs){
+  		forall(i in 7..12){
+  			x[r][i] == 0;  		
+  		}  	
   	}
   	
 }

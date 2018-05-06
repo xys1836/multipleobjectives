@@ -17,6 +17,12 @@
 			<ref name="multipleobjectives.ops" type="setting">
 			</ref>
 		</config>
+		<config default="false" name="allLatencySensitiveSFC" category="opl">
+			<ref name="model1.mod" type="model">
+			</ref>
+			<ref name="allLatencySensitiveSFC.dat" type="data">
+			</ref>
+		</config>
 	</configs>
 	
 </project>
