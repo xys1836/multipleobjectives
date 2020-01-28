@@ -24,9 +24,15 @@
 			</ref>
 		</config>
 		<config default="true" name="forcomparison" category="opl">
-			<ref name="model1.mod" type="model">
+			<ref name="mod-forcomparison.mod" type="model">
 			</ref>
-			<ref name="forcomparison.dat" type="data">
+			<ref name="nsfnet.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="model2Config" category="opl">
+			<ref name="model2.mod" type="model">
+			</ref>
+			<ref name="nsfnet.dat" type="data">
 			</ref>
 		</config>
 	</configs>
