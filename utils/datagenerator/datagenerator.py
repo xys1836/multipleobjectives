@@ -2,7 +2,7 @@ import random
 NbOfVNFTypes = 4
 NbOfNodes = 12
 NbOfWorkNodes = 6
-NbOfSFCs = 20
+NbOfSFCs = 10
 
 SetupCostLow = 1
 SetupCostHigh = 10
@@ -114,6 +114,9 @@ SFCRequest, sfc_c = generate_SFCRequest(NbOfSFCs,
                         LatencyHigh,
                         BwRequirementLow,
                         BwRequirementHigh)
+
+print 'NbOfSFCs = ' + str(NbOfSFCs) + ';'
+print 'MaxNbOfVNFs = 4;'
 print VNFSetupCost
 print VNFOpCost
 print SFCRequest
