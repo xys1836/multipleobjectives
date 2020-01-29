@@ -35,6 +35,46 @@
 			<ref name="nsfnet.dat" type="data">
 			</ref>
 		</config>
+		<config default="false" name="sfc-8-proposal-with-delay" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+			<ref name="exp-dat/sfc-8/sfc-8-proposal.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="sfc-8-proposal-without-delay" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-dat/sfc-8/sfc-8-proposal.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-without-delay.mod" type="model">
+			</ref>
+		</config>
+		<config default="false" name="sfc-8-prework-with-delay" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+			<ref name="exp-dat/sfc-8/sfc-8-prework.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="sfc-9-proposal-with-delay" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+			<ref name="exp-dat/sfc-9/sfc-9-proposal.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="sfc-9-proposal-without-delay" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-dat/sfc-9/sfc-9-proposal.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-without-delay.mod" type="model">
+			</ref>
+		</config>
 	</configs>
 	
 </project>
