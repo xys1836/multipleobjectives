@@ -75,6 +75,44 @@
 			<ref name="exp-mod/proposal-without-delay.mod" type="model">
 			</ref>
 		</config>
+		<config default="false" name="sfc-9-prework-with-delay" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+			<ref name="exp-dat/sfc-9/sfc-9-prework.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="sfc-9-prework-with-delay-2" category="opl">
+			<ref name="exp-dat/sfc-9/sfc-9-prework-2.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+		</config>
+		<config default="false" name="sfc-7-prework-with-delay-2" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+			<ref name="exp-dat/sfc-7/sfc-7-prework-2.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="sfc-7-proposal-with-delay-2" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-with-delay.mod" type="model">
+			</ref>
+			<ref name="exp-dat/sfc-7/sfc-7-proposal-2.dat" type="data">
+			</ref>
+		</config>
+		<config default="false" name="sfc-7-proposal-without-delay-2" category="opl">
+			<ref name="nsfnet_topology.dat" type="data">
+			</ref>
+			<ref name="exp-dat/sfc-7/sfc-7-proposal-2.dat" type="data">
+			</ref>
+			<ref name="exp-mod/proposal-without-delay.mod" type="model">
+			</ref>
+		</config>
 	</configs>
 	
 </project>
